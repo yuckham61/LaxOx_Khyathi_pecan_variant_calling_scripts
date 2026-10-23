@@ -1,10 +1,10 @@
 #!/bin/bash
-#SBATCH --job-name=linkage_mapping
+#SBATCH --job-name=order_lakota
 #SBATCH --partition=batch
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=32
-#SBATCH --mem=16G
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=8G
 #SBATCH --time=2-10:00:00
 #SBATCH --output=logs/%x_%j.out
 #SBATCH --error=logs/%x_%j.err
@@ -15,7 +15,8 @@ set -e
 cd /scratch/ad16566/Khyathi_data/Linkage_mapping_lepmap3
 
 # Create folders
-
+mkdir -p logs/
+mkdir -p lakota_LG
 
 # Load module
 # Load Java
@@ -93,10 +94,9 @@ LM3_BIN=/scratch/ad16566/lepmap3/binary+code/bin
 
 
 #OrderMarker2
-#java -cp ${LM3_BIN} OrderMarkers2 map=map_js_filtered.txt data=file_filtered.call informativeMask=2 useKosambi=1 outputPhasedData=2 numThreads=32 identicalLimit=0.005 > Lakota_order_filtered.txt
-
+java -cp ${LM3_BIN} OrderMarkers2 map=map_js_filtered.txt data=file_filtered.call informativeMask=2 useKosambi=1 outputPhasedData=2 numThreads=8 identicalLimit=0.005 > Lakota_order_filtered.txt
 #java -cp ${LM3_BIN} OrderMarkers2 map=map_js_filtered.txt data=file_filtered.call informativeMask=1 useKosambi=1 outputPhasedData=2 numThreads=32 identicalLimit=0.005 > Oaxaca_order_filtered.txt
 
 # convert ordermarkers to output file
 awk -v fullData=1 -f "${LM3_BIN}/map2genotypes.awk" Lakota_order_filtered.txt > Lakota_genotypes.txt
-awk -v fullData=1 -f "${LM3_BIN}/map2genotypes.awk" Oaxaca_order_filtered.txt > Oaxaca_genotypes.txt
+#awk -v fullData=1 -f "${LM3_BIN}/map2genotypes.awk" Oaxaca_order_filtered.txt > Oaxaca_genotypes.txt
