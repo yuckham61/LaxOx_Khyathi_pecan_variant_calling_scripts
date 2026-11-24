@@ -1,12 +1,12 @@
 #!/bin/bash
-#SBATCH --job-name=Haplotype_phasing_minimap                    
+#SBATCH --job-name=ref_concat                    
 #SBATCH --partition=batch                           
 #SBATCH --ntasks=1                                  
 #SBATCH --cpus-per-task=8                           
-#SBATCH --mem=32G                                    
-#SBATCH --time=2-12:00:00                             
-#SBATCH --output=/scratch/ad16566/Khyathi_data/logs/GO_%j.out
-#SBATCH --error=/scratch/ad16566/Khyathi_data/logs/GO_%j.err
+#SBATCH --mem=48G                                                              
+#SBATCH --time=08:00:00                                   # per sample, not 5 days
+#SBATCH --output=/scratch/ad16566/Khyathi_data/logs/ref_index_%j.out
+#SBATCH --error=/scratch/ad16566/Khyathi_data/logs/ref_index_%j.err
 #SBATCH --mail-user=ad16566@uga.edu            
 #SBATCH --mail-type=END                     
 
@@ -23,6 +23,7 @@ FILTPAF="$OUTDIR/minimap2_results/filtered_paf"
 MARKERDIR="$OUTDIR/minimap2_results/markers"
 
 # Make sub-directory
+mkdir -p "$COMBDIR"
 mkdir -p "$OUTDIR/logs"
 mkdir -p "$FILTPAF"
 mkdir -p "$MARKERDIR"
@@ -38,26 +39,26 @@ module load minimap2/2.29-GCCcore-13.3.0
 #################################################################################################################################
 # COMBINE ALL 4 GENOME ASSEMBLIES TO ONE FASTA using [cultivarName]_[hapName]_[ChrID]
 
-#OUT="$COMBDIR/combined_reference.fasta"
-#> "$OUT"
+OUT="$COMBDIR/combined_reference.fasta"
+> "$OUT"
 
-#awk '/^>/ { print ">Lakota_Major_" substr($0,2); next } { print }' \
-#    "$REFDIR/Carya_illinoinensis_var_Lakota_Major.mainGenome.fasta" >> "$OUT"
+awk '/^>/ { print ">Lakota_Major_" substr($0,2); next } { print }' \
+    "$REFDIR/Carya_illinoinensis_var_Lakota_Major.mainGenome.fasta" >> "$OUT"
 
-#awk '/^>scaffold/ { skip=1; next }
-#     /^>Chr/      { skip=0; print ">Lakota_Mahan_" substr($0,2); next }
-#     !skip        { print }' \
-#    "$REFDIR/Carya_illinoinensis_var_Lakota_Mahan.mainGenome.fasta" >> "$OUT"
-#
-#awk '/^>scaffold/ { skip=1; next }
-#     /^>Chr/      { skip=0; print ">Oaxaca_Hap1_" substr($0,2); next }
-#     !skip        { print }' \
-#    "$REFDIR/Carya_illinoinensis_var_87MX3.HAP1.mainGenome.fasta" >> "$OUT"
-#
-#awk '/^>scaffold/ { skip=1; next }
-#     /^>Chr/      { skip=0; print ">Oaxaca_Hap2_" substr($0,2); next }
-#     !skip        { print }' \
-#    "$REFDIR/Carya_illinoinensis_var_87MX3.HAP2.mainGenome.fasta" >> "$OUT"
+awk '/^>scaffold/ { skip=1; next }
+     /^>Chr/      { skip=0; print ">Lakota_Mahan_" substr($0,2); next }
+     !skip        { print }' \
+    "$REFDIR/Carya_illinoinensis_var_Lakota_Mahan.mainGenome.fasta" >> "$OUT"
+
+awk '/^>scaffold/ { skip=1; next }
+     /^>Chr/      { skip=0; print ">Oaxaca_Hap1_" substr($0,2); next }
+     !skip        { print }' \
+    "$REFDIR/Carya_illinoinensis_var_87MX3.HAP1.mainGenome.fasta" >> "$OUT"
+
+awk '/^>scaffold/ { skip=1; next }
+     /^>Chr/      { skip=0; print ">Oaxaca_Hap2_" substr($0,2); next }
+     !skip        { print }' \
+    "$REFDIR/Carya_illinoinensis_var_87MX3.HAP2.mainGenome.fasta" >> "$OUT"
 
 ## At the end of this, there should be the single reference file with [cultivarName]_[hapName]_[ChrID]
 # I have checked the sequence number, scaffaold and header, everything looks good while concating. 
@@ -65,7 +66,7 @@ module load minimap2/2.29-GCCcore-13.3.0
 
 # Index the concatenated reference file
 # Index the complete genome of C_illinoinensisOaxaca_genomics using minimap
-#minimap2 -x sr -t 8 -d "$COMBDIR/combined_reference.mmi" "$COMBDIR/combined_reference.fasta"
+minimap2 -x sr -t 8 -d "$COMBDIR/combined_reference.mmi" "$COMBDIR/combined_reference.fasta"
 
 
 ###################################################################################################################
