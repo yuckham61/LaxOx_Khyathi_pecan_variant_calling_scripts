@@ -5,7 +5,7 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=8G
-#SBATCH --time=2-10:00:00
+#SBATCH --time=4-10:00:00
 #SBATCH --output=logs/%x_%j.out
 #SBATCH --error=logs/%x_%j.err
 
@@ -59,12 +59,11 @@ LM3_BIN=/scratch/ad16566/lepmap3/binary+code/bin
 
 
 # parentcall2
-#java -cp ${LM3_BIN} ParentCall2 \
-#  data=pedigree.txt \
-#  vcfFile=LaxOa_filtered.recode.vcf \
-#  removeNonInformative=1 \
-#  ignoreParentOrder=1 \
-#  > file_filtered.call
+java -cp ${LM3_BIN} ParentCall2 \
+  data=pedigree_for_pangenome.txt \
+  vcfFile=LxO_0.05MAF_MF20_pangenome.vcf \
+  removeNonInformative=1 \
+  > file_filtered.call
 
 #java -cp ${LM3_BIN} SeparateChromosomes2 \
 #  data=file_filtered.call \
@@ -100,3 +99,6 @@ java -cp ${LM3_BIN} OrderMarkers2 map=map_js_filtered.txt data=file_filtered.cal
 # convert ordermarkers to output file
 awk -v fullData=1 -f "${LM3_BIN}/map2genotypes.awk" Lakota_order_filtered.txt > Lakota_genotypes.txt
 #awk -v fullData=1 -f "${LM3_BIN}/map2genotypes.awk" Oaxaca_order_filtered.txt > Oaxaca_genotypes.txt
+
+#{|HW=HZ63-M#,KUY%-HCY_7TmwGg)QP,
+
